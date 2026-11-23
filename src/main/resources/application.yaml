@@ -8,6 +8,7 @@ spring:
 
   jpa:
     open-in-view: false              # stop holding a DB connection during view rendering
+    show-sql: true                   # print SQL so the tagging below is visible in the console
 
   jackson:
     default-property-inclusion: non_null   # hide null fields (extras have no flight number)

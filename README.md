@@ -1,45 +1,52 @@
-# autopilot-airline: step 2 of 7
+# autopilot-airline: step 3 of 7
 
-## Level 1: property tuning
+## Level 2: extension points
 
-**Tag:** `demo-1.0-property-tuning` · **Level 1** · ~3 min
+**Tag:** `demo-2.0-extension-points` · **Level 2** · ~3 min
 
 Demo project for **Spring Boot Beyond the Defaults: A Practical Framework for Overriding Autoconfiguration**.
 
 ```bash
-git checkout demo-1.0-property-tuning     # you are here
+git checkout demo-2.0-extension-points     # you are here
 ```
 
 ## What to say
 
-- Properties are the schema of an autoconfiguration. Boot still builds every bean. The autoconfiguration class just reads different values.
-- This is the cheapest and safest intervention. It needs no Java, and a DevOps team can own it per environment (`application-prod.yaml`).
-- The conditions report does not change, because nothing about who owns the bean changed.
+- Properties are schema. Extension points are contracts: the autoconfiguration asks for every bean of an interface and applies each one before building its bean.
+- Three real use cases: CORS and a correlation ID (Web MVC), partner-friendly date format (Jackson), SQL tagging so a DBA can trace slow queries (Hibernate).
+- No `@EnableWebMvc`, no replaced bean. What the bean does changed, not who owns it, so the report is unchanged.
+- The test to remember: if the conditions report changes, it is not Level 2. A `SecurityFilterChain` bean and a hand-built `JsonMapper` both make a default back off. There is no `DataSourceCustomizer`.
 
 ## Key files to show
 
 | File | Point at |
 |---|---|
-| `src/main/resources/application.yaml` | Four settings: Hikari pool size, `open-in-view: false`, `default-property-inclusion: non_null`, graceful shutdown. |
+| `src/main/java/com/autopilot/airline/config/BookingWebConfig.java` | `WebMvcConfigurer`: CORS mapping and the interceptor registration. |
+| `src/main/java/com/autopilot/airline/config/CorrelationIdInterceptor.java` | Echoes or generates `X-Correlation-Id` and puts it in the logging MDC. |
+| `src/main/java/com/autopilot/airline/config/DepartureDateFormatCustomizer.java` | `JsonMapperBuilderCustomizer` (Jackson 3, `tools.jackson`): dates as `22-Nov-2026`. |
+| `src/main/java/com/autopilot/airline/config/SqlTaggingCustomizer.java` | `HibernatePropertiesCustomizer`: every SQL statement tagged `/* booking-service */` (optional). |
+| `src/main/resources/application.yaml` | `spring.jpa.show-sql: true` was added so the SQL tag is visible. |
 
 ## Run it
 
 ```bash
-git diff demo-0.0-baseline demo-1.0-property-tuning -- src/main/resources/application.yaml
+git show demo-2.0-extension-points --stat
 ./mvnw spring-boot:run
-curl -s localhost:8080/v1/bookings/3 | python3 -m json.tool      # the nulls are gone
+curl -si -H "Origin: https://book.example-air.com" localhost:8080/v1/bookings/1 | grep -iE 'access-control|x-correlation'
+curl -s localhost:8080/v1/bookings/1                              # "departureDate": "22-Nov-2026"
 scripts/snapshot.sh after && diff snapshots/before.txt snapshots/after.txt
 ```
 
 ## What to expect
 
-- `flightNumber: null` and `departureDate: null` no longer appear on the SEAT and MEAL items.
-- The diff prints nothing: the conditions report is **identical** to the baseline.
+- `Access-Control-Allow-Origin` and `X-Correlation-Id` headers appear. Dates read `22-Nov-2026`. The console shows `Hibernate: /* booking-service */ select ...`.
+- The diff prints nothing: `JacksonAutoConfiguration#jacksonJsonMapper` is **still positive**.
+- Remember the Jackson customizer. The Level 4 teaser (slide only) shows it silently disappearing.
 
 ## Next
 
 ```bash
-git checkout demo-2.0-extension-points
+git checkout demo-3.0-dependency-swap
 ```
 
 ## The demo path
@@ -47,8 +54,8 @@ git checkout demo-2.0-extension-points
 | # | Checkout | Topic |
 |---|---|---|
 | 1 | `git checkout demo-0.0-baseline` | The autopilot is engaged |
-| 2 | ➡ `git checkout demo-1.0-property-tuning` | Level 1: property tuning |
-| 3 | `git checkout demo-2.0-extension-points` | Level 2: extension points |
+| 2 | `git checkout demo-1.0-property-tuning` | Level 1: property tuning |
+| 3 | ➡ `git checkout demo-2.0-extension-points` | Level 2: extension points |
 | 4 | `git checkout demo-3.0-dependency-swap` | Level 3: dependency replacement |
 | 5 | `git checkout demo-4.0-security-defaults` | Level 4 (part 1): the security defaults |
 | 6 | `git checkout demo-4.1-own-the-chain` | Level 4 (part 2): own the chain, and make a mistake |
