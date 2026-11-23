@@ -1,0 +1,7 @@
+node_modules/
+slides/dist/
+*.pdf
+.DS_Store
+target/
+.idea/
+snapshots/

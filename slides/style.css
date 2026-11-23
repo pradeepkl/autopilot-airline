@@ -1,0 +1,315 @@
+/* Large type for the back row */
+:root {
+  --slidev-code-font-size: 1.15rem;
+  --slidev-code-line-height: 1.6;
+}
+
+.slidev-layout {
+  font-size: 1.35rem;
+}
+
+.slidev-layout h1 {
+  font-size: 2.6rem;
+}
+
+.slidev-layout table {
+  font-size: 1.2rem;
+}
+
+/* Hide the "Go to slide" list while closed (it overhangs the slide in this
+   Slidev version). Press `g` to open it; it shows normally while open. */
+.fixed.right-5.-top-20 {
+  display: none !important;
+}
+
+/* Hide Slidev's hover navigation toolbar on the audience view; the footer bar
+   (global-bottom.vue) shows previous/next instead. Keyboard navigation and the
+   presenter view are unaffected. */
+.absolute.bottom-0.left-0 > nav.flex.flex-col {
+  display: none !important;
+}
+
+/* Title slide */
+.title-slide {
+  display: flex;
+  align-items: center;
+  gap: 3.5rem;
+  height: 100%;
+}
+.title-logo {
+  width: 15rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 24px rgba(109, 179, 63, 0.35));
+}
+.title-kicker {
+  letter-spacing: 0.2em;
+  font-size: 0.9rem;
+  color: #6db33f;
+  margin-bottom: 0.5rem;
+}
+.title-text h1 {
+  font-size: 3.1rem;
+  line-height: 1.1;
+  margin: 0 0 0.6rem;
+}
+.title-sub {
+  font-size: 1.4rem;
+  opacity: 0.85;
+  max-width: 34rem;
+}
+.title-levels {
+  margin-top: 1.8rem;
+  font-size: 1.05rem;
+  color: #6db33f;
+}
+.title-speaker {
+  margin-top: 1.4rem;
+  font-size: 1rem;
+  opacity: 0.6;
+}
+
+/* Decision ladder slide */
+.decide {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.4rem;
+}
+.d-row {
+  display: grid;
+  grid-template-columns: 17rem 4.5rem 20rem auto;
+  align-items: center;
+  column-gap: 0.8rem;
+  position: relative;
+  padding-bottom: 1.1rem;
+}
+.d-q {
+  font-size: 1rem;
+  line-height: 1.2;
+  padding: 0.55rem 0.9rem;
+  border: 2px solid rgba(160, 160, 160, 0.55);
+  border-radius: 0.6rem;
+  background: rgba(255, 255, 255, 0.05);
+}
+.d-arrow {
+  font-size: 0.95rem;
+  text-align: center;
+  color: #6db33f;
+  font-weight: 700;
+}
+.d-lvl {
+  font-size: 1.05rem;
+  font-weight: 700;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.6rem;
+  color: #101010;
+}
+.d-lvl span {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  text-align: center;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.25);
+  color: #fff;
+  margin-right: 0.5rem;
+  font-size: 0.9rem;
+}
+.l1 { background: #6db33f; }
+.l2 { background: #4aa3ff; }
+.l3 { background: #f5b83d; }
+.l4 { background: #ef5b5b; color: #fff; }
+.d-no {
+  position: absolute;
+  left: 1.4rem;
+  bottom: -0.15rem;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+.d-note {
+  margin-top: 0.2rem;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.9rem;
+  border-left: 4px solid #6db33f;
+  background: rgba(109, 179, 63, 0.1);
+  border-radius: 0.3rem;
+}
+
+/* Autopilot systems grid (slide 3) */
+.systems {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.8rem;
+  margin-top: 1.6rem;
+}
+.sys {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.8rem 0.4rem;
+  min-height: 4.4rem;
+  border: 2px solid rgba(109, 179, 63, 0.7);
+  border-radius: 0.6rem;
+  background: rgba(109, 179, 63, 0.08);
+}
+.sys b {
+  font-size: 1rem;
+}
+.sys small {
+  font-size: 0.75rem;
+  opacity: 0.75;
+  margin-top: 0.15rem;
+}
+
+/* Rich tables: rounded, colored borders; rows 1-4 use the level colors */
+.slidev-layout table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.55rem;
+  font-size: 1.1rem;
+}
+.slidev-layout table th,
+.slidev-layout table td {
+  padding: 0.7rem 1rem;
+  border: 0;
+  border-top: 2px solid var(--row-color, #6db33f);
+  border-bottom: 2px solid var(--row-color, #6db33f);
+  background: color-mix(in srgb, var(--row-color, #6db33f) 10%, transparent);
+  text-align: left;
+}
+.slidev-layout table th:first-child,
+.slidev-layout table td:first-child {
+  border-left: 6px solid var(--row-color, #6db33f);
+  border-radius: 0.6rem 0 0 0.6rem;
+  font-weight: 700;
+}
+.slidev-layout table th:last-child,
+.slidev-layout table td:last-child {
+  border-right: 2px solid var(--row-color, #6db33f);
+  border-radius: 0 0.6rem 0.6rem 0;
+}
+.slidev-layout table thead th {
+  --row-color: #6db33f;
+  background: #6db33f;
+  color: #101010;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+.slidev-layout table tbody tr:nth-child(1) { --row-color: #6db33f; }
+.slidev-layout table tbody tr:nth-child(2) { --row-color: #4aa3ff; }
+.slidev-layout table tbody tr:nth-child(3) { --row-color: #f5b83d; }
+.slidev-layout table tbody tr:nth-child(4) { --row-color: #ef5b5b; }
+.slidev-layout table tbody tr:nth-child(n+5) { --row-color: #9aa0a6; }
+.slidev-layout table thead th {
+  font-weight: 700;
+}
+
+/* Level 2 use-case cards and "not Level 2" panels */
+.uc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.uc,
+.trap {
+  padding: 0.9rem 1rem 0.4rem;
+  border: 2px solid var(--c);
+  border-top-width: 6px;
+  border-radius: 0.7rem;
+  background: color-mix(in srgb, var(--c) 10%, transparent);
+}
+.uc p,
+.trap p {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  margin: 0.4rem 0;
+}
+.uc-tag {
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  color: var(--c);
+  font-weight: 700;
+}
+.uc-hook {
+  font-family: var(--slidev-code-font-family, monospace);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-top: 0.25rem;
+}
+.uc-mvc { --c: #4aa3ff; }
+.uc-jpa { --c: #b48cff; }
+.uc-json { --c: #2dd4bf; }
+.trap-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.trap-sec { --c: #f5b83d; }
+.trap-ds { --c: #ef5b5b; }
+.trap-grid + .d-note { margin-top: 1rem; }
+
+/* "How the defaults back off" diagram */
+.flow {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr 1fr;
+  gap: 0.6rem 1.4rem;
+  margin-top: 0.8rem;
+  align-items: stretch;
+}
+.fl-head {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.fl-default,
+.fl-cond,
+.fl-ours {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.6rem;
+  border: 2px solid;
+  font-size: 0.85rem;
+  line-height: 1.3;
+}
+.fl-default small,
+.fl-cond small,
+.fl-ours small { font-size: 0.78rem; opacity: 0.85; }
+.fl-default {
+  border-color: #6db33f;
+  background: rgba(109, 179, 63, 0.1);
+  transition: all 0.4s;
+}
+.fl-default.fl-off {
+  border-color: #777;
+  border-style: dashed;
+  background: rgba(120, 120, 120, 0.08);
+}
+.fl-default.fl-off b { text-decoration: line-through; opacity: 0.6; }
+.fl-cond {
+  border-color: #f5b83d;
+  background: rgba(245, 184, 61, 0.08);
+}
+.fl-ours {
+  border-color: #4aa3ff;
+  background: rgba(74, 163, 255, 0.12);
+}
+.stack { display: grid; }
+.stack > * { grid-area: 1 / 1; }
+.fl-status { font-size: 0.8rem; font-weight: 700; }
+.fl-status.ok { color: #6db33f; }
+.fl-status.no { color: #ef5b5b; }
+.fl-report {
+  margin-top: 0.8rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}

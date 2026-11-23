@@ -1,0 +1,14 @@
+{
+  "name": "autopilot-airline-slides",
+  "private": true,
+  "scripts": {
+    "dev": "slidev --open",
+    "build": "slidev build",
+    "export": "slidev export --dark --output autopilot-airline.pdf"
+  },
+  "dependencies": {
+    "@slidev/cli": "^0.49.29",
+    "@slidev/theme-default": "latest",
+    "playwright-chromium": "^1.49.0"
+  }
+}

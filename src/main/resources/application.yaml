@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: autopilot-airline
+
+# The cockpit: expose the instruments used throughout the demo.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,conditions,beans
