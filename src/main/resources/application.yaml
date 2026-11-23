@@ -2,6 +2,19 @@ spring:
   application:
     name: autopilot-airline
 
+  datasource:
+    hikari:
+      maximum-pool-size: 20          # default is 10
+
+  jpa:
+    open-in-view: false              # stop holding a DB connection during view rendering
+
+  jackson:
+    default-property-inclusion: non_null   # hide null fields (extras have no flight number)
+
+server:
+  shutdown: graceful                 # let in-flight requests finish on stop
+
 # The cockpit: expose the instruments used throughout the demo.
 management:
   endpoints:

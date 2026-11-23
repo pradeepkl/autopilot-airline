@@ -1,58 +1,53 @@
-# autopilot-airline: step 1 of 7
+# autopilot-airline: step 2 of 7
 
-## The autopilot is engaged
+## Level 1: property tuning
 
-**Tag:** `demo-0.0-baseline` · **Setup and baseline** · ~2 min
+**Tag:** `demo-1.0-property-tuning` · **Level 1** · ~3 min
 
 Demo project for **Spring Boot Beyond the Defaults: A Practical Framework for Overriding Autoconfiguration**.
 
 ```bash
-git checkout demo-0.0-baseline     # you are here
+git checkout demo-1.0-property-tuning     # you are here
 ```
 
 ## What to say
 
-- Nothing here is configured. We never wrote a server, a connection pool, an ORM or a JSON setup. Spring Boot assembled all of it from the starters in `pom.xml`.
-- Read the instruments before touching any control. The Conditions Evaluation Report shows what Boot decided and why.
-- Remember the baseline: nulls appear in the JSON, dates are ISO-8601, Tomcat is the server, HikariCP is the pool. Every later step is judged against this snapshot.
+- Properties are the schema of an autoconfiguration. Boot still builds every bean. The autoconfiguration class just reads different values.
+- This is the cheapest and safest intervention. It needs no Java, and a DevOps team can own it per environment (`application-prod.yaml`).
+- The conditions report does not change, because nothing about who owns the bean changed.
 
 ## Key files to show
 
 | File | Point at |
 |---|---|
-| `pom.xml` | Five starters and no versions. This is the entire infrastructure declaration. |
-| `src/main/resources/application.yaml` | Only the app name and the actuator exposure (the cockpit). Nothing else is configured. |
-| `src/main/java/com/autopilot/airline/booking/Booking.java` | The aggregate: a booking with many line items. |
-| `src/main/java/com/autopilot/airline/booking/BookingItem.java` | A line item: a flight SEGMENT or an extra (BAGGAGE, SEAT, MEAL). Extras have null flight number and date. |
-| `src/main/java/com/autopilot/airline/booking/BookingController.java` | `GET /v1/bookings`, `GET /v1/bookings/{id}`, `POST /v1/bookings`. |
-| `scripts/conditions.sh and scripts/snapshot.sh` | The instruments: filter the report, and save it so two steps can be diffed. |
+| `src/main/resources/application.yaml` | Four settings: Hikari pool size, `open-in-view: false`, `default-property-inclusion: non_null`, graceful shutdown. |
 
 ## Run it
 
 ```bash
+git diff demo-0.0-baseline demo-1.0-property-tuning -- src/main/resources/application.yaml
 ./mvnw spring-boot:run
-curl -s localhost:8080/v1/bookings/3 | python3 -m json.tool      # nulls on the SEAT and MEAL items, ISO dates
-scripts/conditions.sh 'JacksonAutoConfiguration#|DataSourceConfiguration\.|TomcatServlet'
-scripts/snapshot.sh before                                      # every later step diffs against this
+curl -s localhost:8080/v1/bookings/3 | python3 -m json.tool      # the nulls are gone
+scripts/snapshot.sh after && diff snapshots/before.txt snapshots/after.txt
 ```
 
 ## What to expect
 
-- `JacksonAutoConfiguration#jacksonJsonMapper`, `DataSourceConfiguration.Hikari` and `TomcatServletWebServerAutoConfiguration` are in **positive matches**.
-- Each one is there because its guard (`@ConditionalOnMissingBean`, `@ConditionalOnClass`) passed.
+- `flightNumber: null` and `departureDate: null` no longer appear on the SEAT and MEAL items.
+- The diff prints nothing: the conditions report is **identical** to the baseline.
 
 ## Next
 
 ```bash
-git checkout demo-1.0-property-tuning
+git checkout demo-2.0-extension-points
 ```
 
 ## The demo path
 
 | # | Checkout | Topic |
 |---|---|---|
-| 1 | ➡ `git checkout demo-0.0-baseline` | The autopilot is engaged |
-| 2 | `git checkout demo-1.0-property-tuning` | Level 1: property tuning |
+| 1 | `git checkout demo-0.0-baseline` | The autopilot is engaged |
+| 2 | ➡ `git checkout demo-1.0-property-tuning` | Level 1: property tuning |
 | 3 | `git checkout demo-2.0-extension-points` | Level 2: extension points |
 | 4 | `git checkout demo-3.0-dependency-swap` | Level 3: dependency replacement |
 | 5 | `git checkout demo-4.0-security-defaults` | Level 4 (part 1): the security defaults |
