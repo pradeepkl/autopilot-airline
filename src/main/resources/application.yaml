@@ -3,8 +3,8 @@ spring:
     name: autopilot-airline
 
   datasource:
-    hikari:
-      maximum-pool-size: 20          # default is 10
+    dbcp2:
+      max-total: 20                  # was spring.datasource.hikari.maximum-pool-size
 
   jpa:
     open-in-view: false              # stop holding a DB connection during view rendering
