@@ -1,45 +1,51 @@
-# autopilot-airline: step 6 of 7
+# autopilot-airline: step 7 of 7
 
-## Level 4 (part 2): own the chain, and make a mistake
+## Level 4 (part 3): the fix, and the cost of ownership
 
-**Tag:** `demo-4.1-own-the-chain` · **Level 4** · ~2 min
+**Tag:** `demo-4.2-own-the-chain-fixed` · **Level 4** · ~2 min
 
 Demo project for **Spring Boot Beyond the Defaults: A Practical Framework for Overriding Autoconfiguration**.
 
 ```bash
-git checkout demo-4.1-own-the-chain     # you are here
+git checkout demo-4.2-own-the-chain-fixed     # you are here
 ```
 
 ## What to say
 
-- Ownership transfer. Declare a `SecurityFilterChain` and a `UserDetailsService` and the defaults back off. Show the diagram slide: our beans in, the defaults out.
-- The report records it precisely: `found beans of type 'SecurityFilterChain' securityFilterChain`. The generated password is gone from the log.
-- Now the cost. I wrote only `httpBasic()`. The default chain authenticated every request. Mine does not, because I never said so. Call the API with no credentials.
+- Fix it by stating what the default used to do silently: `anyRequest().authenticated()`, role rules, stateless sessions and CSRF off for a header-authenticated API.
+- The conditions report is the same as in the previous step. It proves who owns the bean, not whether the bean is correct. Correctness is now your code and your tests.
+- Teaser (slide only): a hand-built `@Bean JsonMapper` makes `jacksonJsonMapper` negative and silently drops the Level 2 date format and the `spring.jackson.*` properties.
+- Close with the decision rule: property, then extension point, then dependency swap, and only then ownership. Stop at the lowest level that works.
 
 ## Key files to show
 
 | File | Point at |
 |---|---|
-| `src/main/java/com/autopilot/airline/config/BookingSecurityConfig.java` | Two beans: `securityFilterChain` (only `httpBasic()`) and `userDetailsService` (in-memory `passenger` and `admin`). Point at the missing `authorizeHttpRequests`. |
+| `src/main/java/com/autopilot/airline/config/BookingSecurityConfig.java` | Same file, now with `authorizeHttpRequests`: health open, `/actuator/**` ADMIN, `GET /v1/bookings` ADMIN, `anyRequest().authenticated()`. |
 
 ## Run it
 
 ```bash
-./mvnw spring-boot:run                                           # no generated password in the log
-CURL_AUTH=admin:admin123 scripts/conditions.sh 'WebSecurity|UserDetails'
-curl -i localhost:8080/v1/bookings                                # 200: wide open, no credentials
-curl -i localhost:8080/actuator/beans                             # 200: the actuator is open too
+git diff demo-4.1-own-the-chain demo-4.2-own-the-chain-fixed -- src/main/java
+./mvnw spring-boot:run
+curl -s -o /dev/null -w '%{http_code}\n' localhost:8080/v1/bookings                                        # 401
+curl -s -o /dev/null -w '%{http_code}\n' -u passenger:passenger123 localhost:8080/v1/bookings             # 403
+curl -s -o /dev/null -w '%{http_code}\n' -u admin:admin123 localhost:8080/v1/bookings                     # 200
+curl -s -o /dev/null -w '%{http_code}\n' -u passenger:passenger123 localhost:8080/v1/bookings/1           # 200
 ```
 
 ## What to expect
 
-- `ManagementWebSecurityAutoConfiguration` and `UserDetailsServiceAutoConfiguration` are **negative**, each naming the bean that caused it.
-- The API and the actuator answer **200 without credentials**. The app starts fine and nothing fails.
+- 401 with no credentials, 403 for a passenger on the admin-only list, 200 for an admin and for a passenger on their own booking.
+- The conditions report is **identical** to part 2.
 
 ## Next
 
+**This is the final step.** Wrap up with the decision rule and the takeaways slide.
+
 ```bash
-git checkout demo-4.2-own-the-chain-fixed
+git checkout main                      # same commit as this tag: the latest
+git checkout demo-0.0-baseline   # start over
 ```
 
 ## The demo path
@@ -51,8 +57,8 @@ git checkout demo-4.2-own-the-chain-fixed
 | 3 | `git checkout demo-2.0-extension-points` | Level 2: extension points |
 | 4 | `git checkout demo-3.0-dependency-swap` | Level 3: dependency replacement |
 | 5 | `git checkout demo-4.0-security-defaults` | Level 4 (part 1): the security defaults |
-| 6 | ➡ `git checkout demo-4.1-own-the-chain` | Level 4 (part 2): own the chain, and make a mistake |
-| 7 | `git checkout demo-4.2-own-the-chain-fixed` | Level 4 (part 3): the fix, and the cost of ownership |
+| 6 | `git checkout demo-4.1-own-the-chain` | Level 4 (part 2): own the chain, and make a mistake |
+| 7 | ➡ `git checkout demo-4.2-own-the-chain-fixed` | Level 4 (part 3): the fix, and the cost of ownership |
 
 ## Quick reference
 
