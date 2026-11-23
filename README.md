@@ -1,44 +1,45 @@
-# autopilot-airline: step 5 of 7
+# autopilot-airline: step 6 of 7
 
-## Level 4 (part 1): the security defaults
+## Level 4 (part 2): own the chain, and make a mistake
 
-**Tag:** `demo-4.0-security-defaults` · **Level 4** · ~1.5 min
+**Tag:** `demo-4.1-own-the-chain` · **Level 4** · ~2 min
 
 Demo project for **Spring Boot Beyond the Defaults: A Practical Framework for Overriding Autoconfiguration**.
 
 ```bash
-git checkout demo-4.0-security-defaults     # you are here
+git checkout demo-4.1-own-the-chain     # you are here
 ```
 
 ## What to say
 
-- We add one dependency and write no security code. Spring Security autoconfigures an entire subsystem.
-- Note the generated password in the log and the 401 on every request. The default chain protects everything, including the actuator.
-- With Actuator on the classpath the default chain comes from `ManagementWebSecurityAutoConfiguration`. This is what we are about to take over.
+- Ownership transfer. Declare a `SecurityFilterChain` and a `UserDetailsService` and the defaults back off. Show the diagram slide: our beans in, the defaults out.
+- The report records it precisely: `found beans of type 'SecurityFilterChain' securityFilterChain`. The generated password is gone from the log.
+- Now the cost. I wrote only `httpBasic()`. The default chain authenticated every request. Mine does not, because I never said so. Call the API with no credentials.
 
 ## Key files to show
 
 | File | Point at |
 |---|---|
-| `pom.xml` | One new dependency: `spring-boot-starter-security`. |
+| `src/main/java/com/autopilot/airline/config/BookingSecurityConfig.java` | Two beans: `securityFilterChain` (only `httpBasic()`) and `userDetailsService` (in-memory `passenger` and `admin`). Point at the missing `authorizeHttpRequests`. |
 
 ## Run it
 
 ```bash
-./mvnw spring-boot:run                                           # log: Using generated security password: ...
-curl -i localhost:8080/v1/bookings                                # 401 Unauthorized
-CURL_AUTH=user:<generated-password> scripts/conditions.sh 'WebSecurity|UserDetails'
+./mvnw spring-boot:run                                           # no generated password in the log
+CURL_AUTH=admin:admin123 scripts/conditions.sh 'WebSecurity|UserDetails'
+curl -i localhost:8080/v1/bookings                                # 200: wide open, no credentials
+curl -i localhost:8080/actuator/beans                             # 200: the actuator is open too
 ```
 
 ## What to expect
 
-- `ManagementWebSecurityAutoConfiguration` (the default chain) and `UserDetailsServiceAutoConfiguration` (the generated user) are **positive**.
-- `SecurityAutoConfiguration` is the entry point and stays positive for the rest of the demo.
+- `ManagementWebSecurityAutoConfiguration` and `UserDetailsServiceAutoConfiguration` are **negative**, each naming the bean that caused it.
+- The API and the actuator answer **200 without credentials**. The app starts fine and nothing fails.
 
 ## Next
 
 ```bash
-git checkout demo-4.1-own-the-chain
+git checkout demo-4.2-own-the-chain-fixed
 ```
 
 ## The demo path
@@ -49,8 +50,8 @@ git checkout demo-4.1-own-the-chain
 | 2 | `git checkout demo-1.0-property-tuning` | Level 1: property tuning |
 | 3 | `git checkout demo-2.0-extension-points` | Level 2: extension points |
 | 4 | `git checkout demo-3.0-dependency-swap` | Level 3: dependency replacement |
-| 5 | ➡ `git checkout demo-4.0-security-defaults` | Level 4 (part 1): the security defaults |
-| 6 | `git checkout demo-4.1-own-the-chain` | Level 4 (part 2): own the chain, and make a mistake |
+| 5 | `git checkout demo-4.0-security-defaults` | Level 4 (part 1): the security defaults |
+| 6 | ➡ `git checkout demo-4.1-own-the-chain` | Level 4 (part 2): own the chain, and make a mistake |
 | 7 | `git checkout demo-4.2-own-the-chain-fixed` | Level 4 (part 3): the fix, and the cost of ownership |
 
 ## Quick reference

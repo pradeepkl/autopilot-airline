@@ -8,7 +8,7 @@
 # once Spring Security protects the actuator endpoints).
 set -euo pipefail
 
-PATTERN="${1:-Jackson|DataSource|Tomcat|Jetty|WebMvcAutoConfiguration|Hibernate|SecurityFilterChain|UserDetailsService}"
+PATTERN="${1:-Jackson|DataSource|Tomcat|Jetty|WebMvcAutoConfiguration|Hibernate|WebSecurity|SecurityFilterChain|UserDetailsService}"
 BASE_URL="${BASE_URL:-http://localhost:8080}"
 AUTH=()
 if [[ -n "${CURL_AUTH:-}" ]]; then AUTH=(-u "$CURL_AUTH"); fi
