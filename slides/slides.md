@@ -19,8 +19,6 @@ editor: false
 
 <div class="title-text">
 
-<div class="title-kicker">LIVE DEMO · FLYING ON AUTOPILOT</div>
-
 # Spring Boot Beyond the Defaults
 
 <div class="title-sub">A Practical Framework for Overriding Autoconfiguration</div>
@@ -42,395 +40,598 @@ Repo: autopilot-airline (show URL once).
 
 ---
 
-# The problem
+# About me
 
-<v-clicks>
+<div class="author-grid">
 
-- Defaults are great — until they no longer fit
-- Teams then reach for the **heaviest** tool first
-- The result: bean replacement, framework fights, configuration sprawl
+<div class="book-stack">
 
-</v-clicks>
+<div class="book-row">
+  <img src="/book-spring-boot-on-autopilot.webp" alt="Spring Boot: On Autopilot cover" />
+  <div>
+    <div class="book-title">Spring Boot: On Autopilot</div>
+    <small>Engineering Beyond Defaults · Spring Boot 4</small>
+  </div>
+</div>
+
+<div class="book-row">
+  <img src="/book-modern-java.jpg" alt="Modern Java: The Mindset Shift cover" />
+  <div>
+    <div class="book-title">Modern Java: The Mindset Shift</div>
+    <small>From Implementation-Oriented Code to Intent-Oriented Design · Java 25</small>
+  </div>
+</div>
+
+<div class="book-row">
+  <img src="/book-k8s-mastery.webp" alt="21 Days to Kubernetes Mastery cover" />
+  <div>
+    <div class="book-title">21 Days to Kubernetes Mastery</div>
+    <small>An Actionable Roadmap to Kubernetes</small>
+  </div>
+</div>
+
+</div>
+
+<div class="about-me">
+
+<img class="speaker-photo" src="/speaker.jpeg" alt="Pradeep Kumar L" />
+
+## Pradeep Kumar L
+
+- Consultant
+- Just Author
+
+</div>
+
+</div>
 
 <!--
-[1:00 | 1 min]
-Ask: "Who has declared a DataSource or ObjectMapper bean 'just to change one thing'?"
-Land: the question is not CAN you override, but at WHICH LEVEL.
+[0:30 | 30 sec]
+Quick intro: I am a consultant and the author of three books. Spring Boot: On Autopilot (Spring Boot 4) is where this talk's framework comes from. Modern Java: The Mindset Shift (Java 25) is the companion on the language side. 21 Days to Kubernetes Mastery covers running it all in production.
+Covers: spring-boot.classpath.in, modern-java.classpath.in and k8s-mastery.classpath.dev.
+Do not linger - one line, then move on to the autopilot idea.
 -->
 
 ---
 
-# Spring Boot is the autopilot
+# The magic of autoconfiguration
 
-<div class="systems">
-  <div class="sys"><b>Server</b><small>Tomcat</small></div>
-  <div class="sys"><b>Web MVC</b><small>DispatcherServlet</small></div>
-  <div class="sys"><b>JSON</b><small>Jackson</small></div>
-  <div class="sys"><b>Validation</b><small>Hibernate Validator</small></div>
-  <div class="sys"><b>Logging</b><small>Logback</small></div>
-  <div class="sys"><b>DataSource</b><small>HikariCP</small></div>
-  <div class="sys"><b>ORM</b><small>Hibernate</small></div>
-  <div class="sys"><b>Transactions</b><small>JpaTransactionManager</small></div>
-  <div class="sys"><b>Security</b><small>Default filter chain</small></div>
-  <div class="sys"><b>Metrics</b><small>Micrometer + Actuator</small></div>
+- **Behind the scenes:** Spring Boot autoconfiguration wires your infrastructure from sensible defaults, before you write any configuration
+- **Your role:** developers wear the pilot's hat, flying in **autopilot mode**
+- **How you read it:** the instruments are **declarative**, not imperative: Actuator, the conditions report, starters for dependencies
+- **The catch:** defaults are great for bootstrapping, but to **extend and customize** beyond them you must understand how the app is configured
+
+
+<div class="mt-8 text-xl opacity-90">
+✨ Spring Boot works like magic. Magic is good, but to be a <b>magician</b> you need to know the tricks.
+</div>
+
+<!--
+[1:00 | 1 min]
+Foundation of the talk: before we override anything, agree on what the autopilot is and how to read it.
+Autoconfiguration = defaults chosen from classpath, properties and existing beans. Starters bring the dependencies, conditions decide what is wired.
+Instruments (Actuator, conditions report) are how a pilot checks what the autopilot is doing, without writing wiring code.
+Caption: magic is good - nobody is saying don't use it. But a magician knows the trick behind it, and that is what lets you change the show.
+Land: sensible defaults are great for bootstrapping - and to go beyond them you need to know the tricks.
+-->
+
+---
+
+# What the autopilot wires for you
+
+<div class="layers">
+
+<div class="uc layer l-jars">
+  <div class="uc-tag">1 · JARS</div>
+  <div class="uc-hook">Starters</div>
+  <p>One dependency pulls a <b>group of jars</b> with compatible versions. You never pick the versions.</p>
+  <ul>
+    <li><code>starter-web</code></li>
+    <li><code>starter-data-jpa</code></li>
+    <li><code>starter-security</code></li>
+  </ul>
+</div>
+
+<div class="layer-arrow">→</div>
+
+<div class="uc layer l-auto">
+  <div class="uc-tag">2 · AUTOCONFIGURATION</div>
+  <div class="uc-hook">Conditions</div>
+  <p>Evaluates the <b>classpath</b>, <b>properties</b> and <b>existing beans</b>, then decides what to register.</p>
+  <ul>
+    <li><code>WebMvcAutoConfiguration</code></li>
+    <li><code>DataSourceAutoConfiguration</code></li>
+    <li><code>JacksonAutoConfiguration</code></li>
+  </ul>
+</div>
+
+<div class="layer-arrow">→</div>
+
+<div class="uc layer l-beans">
+  <div class="uc-tag">3 · INFRA BEANS</div>
+  <div class="uc-hook">Registered for you</div>
+  <p>The plumbing you never declared:</p>
+  <ul>
+    <li>Embedded <b>Tomcat</b></li>
+    <li><b>DispatcherServlet</b></li>
+    <li><b>HandlerMapping</b> / HandlerAdapter</li>
+    <li><b>DataSource</b> (HikariCP)</li>
+    <li><b>EntityManagerFactory</b>, <b>JsonMapper</b></li>
+  </ul>
+</div>
+
 </div>
 
 <div class="mt-6 text-xl">
-Engaged before you touch anything — <b>reasonable defaults</b>, assembled for you.
+Add a starter, get a working subsystem. <b>Nobody wrote the wiring, but you own the outcome.</b>
 </div>
 
 <!--
 [2:00 | 1 min]
-Strength AND risk: it is engaged before you touch anything.
-Cue: "Autopilot is not the enemy. The skill is knowing when to intervene."
+Walk left to right.
+Jars: a starter is a group of jars, versions managed by the Boot BOM. You say "I want web", not "Tomcat 11 + Spring MVC 7 + Jackson x.y".
+Autoconfiguration: the conditions engine looks at three inputs - classpath, properties, existing beans - and decides what to register.
+Infra beans: embedded Tomcat, DispatcherServlet, handler mappings, DataSource, EntityManagerFactory, JsonMapper. None of them is in our code.
+Strength AND risk: it is engaged before you touch anything. "Autopilot is not the enemy. The skill is knowing when to intervene."
 -->
 
 ---
 
-# Read the cockpit first
+# Read the cockpit instruments
 
-<div class="grid grid-cols-2 gap-8">
-<div>
+<div class="cockpit-wrap">
 
-**Three inputs the engine evaluates**
+<div class="instr-table">
 
-1. Classpath — the jars present
-2. Properties — bound values
-3. Bean registry — beans already registered
-
-</div>
-<div>
-
-**Instruments**
-
-- `--debug` → Conditions Evaluation Report
-- `/actuator/conditions`
-- `mvn dependency:tree`
+| Instrument | Reads | Maps to |
+|---|---|---|
+| 🎛️ Autopilot status | `--debug` | What engaged, and why not |
+| 📦 Cargo manifest | `mvn dependency:tree` | **Classpath** |
+| 🎚️ Cockpit settings | `/actuator/env` | **Properties** |
+| 🗺️ Wiring diagram | `/actuator/beans` | **Bean registry** |
 
 </div>
+
+<div class="pilot-focus">
+  <div class="pf-head">👨‍✈️ THE PILOT'S FOCUS</div>
+  <div class="pf-card pf-atc">
+    <div class="pf-icon">📡</div>
+    <div><b>ATC communication</b><small>REST contracts, JSON formats, CORS, partner integrations</small></div>
+  </div>
+  <div class="pf-card pf-safe">
+    <div class="pf-icon">🛟</div>
+    <div><b>Passenger safety</b><small>authentication, authorization, validation, transactions</small></div>
+  </div>
+  <div class="pf-auto">⚙️ The autopilot does the heavy lifting: wiring, pooling, threading, serialization</div>
 </div>
 
-<div class="mt-8 opacity-80">
-Imperative <code>@Bean</code> wiring → <b>declarative conditions</b>
 </div>
 
 <!--
 [3:00 | 1 min]
-Every override in this talk changes ONE of these three inputs.
-The report is the proof. Same gesture every time: before / change / after.
+A pilot does not hand-fly every system. They read the instruments and trust the autopilot for the heavy lifting.
+Instruments map to the three inputs the conditions engine evaluates: cargo manifest = classpath, cockpit settings = properties, wiring diagram = bean registry.
+Autopilot status (--debug / conditions report) is the proof - the same gesture every time: before / change / after.
+The pilot's focus is the mission: ATC communication (our API contracts, partner systems) and passenger safety (security, validation, transactions). Let the instruments and the autopilot handle the internals.
+Every override in this talk changes ONE of the three inputs.
 -->
 
 ---
-layout: center
-class: text-center
----
 
-# ▶ DEMO 0 — Baseline
+# Defaults, effort and control
 
-`git checkout demo-0.0-baseline`
+<ConfigSlider />
 
-<div class="mt-6 opacity-70">
-Start app · filter conditions report · GET /v1/bookings
+<div class="mt-6 text-xl">
+Most of an app stays on the defaults. <b>Every step away from them costs effort and buys control.</b>
 </div>
 
 <!--
-[4:00 | 2 min]  git checkout demo-0.0-baseline
-1. ./mvnw spring-boot:run     (or: java -jar target/*.jar after ./mvnw -DskipTests package)
-2. curl -s localhost:8080/v1/bookings/3 | python3 -m json.tool     -> nulls on extras, ISO dates
-3. scripts/conditions.sh 'JacksonAutoConfiguration#|DataSourceConfiguration\.|TomcatServlet'
-   Point at: JacksonAutoConfiguration#jacksonJsonMapper, DataSourceConfiguration.Hikari, TomcatServletWebServerAutoConfiguration.
-4. scripts/snapshot.sh before    <- every later demo diffs against this.
-FALLBACK: slides/public/before.txt
+[4:00 | 1 min]
+Interactive: drag the slider. It starts at 80% defaults - most of a real app is Spring Boot's sensible defaults.
+Left: effort. Right: control. Both rise as you move away from the defaults, and effort rises faster than control (the percentages are illustrative, not measured).
+The chip under the slider names the level you are on - the ladder is next: properties, customizers, dependency swap, ownership.
+Land: leave the slider where it is until you NEED more control. Do not buy effort you do not need.
+-->
+
+---
+
+# Why customize?
+
+<div class="needs">
+
+<div class="need n1">
+  <div class="n-icon">📈</div>
+  <div class="n-text"><b>Production load is higher than the defaults assume</b><small>connection pool size, JSON null handling</small></div>
+  <div class="n-arrow">→</div>
+  <div class="n-chip"><span>1</span> Tune a property</div>
+</div>
+
+<div class="need n2">
+  <div class="n-icon">🤝</div>
+  <div class="n-text"><b>Partners and web apps expect something specific</b><small>CORS, correlation ID, <code>22-Nov-2026</code> dates</small></div>
+  <div class="n-arrow">→</div>
+  <div class="n-chip"><span>2</span> Plug into an extension point</div>
+</div>
+
+<div class="need n3">
+  <div class="n-icon">🧩</div>
+  <div class="n-text"><b>The library itself is the constraint</b><small>company standard says Jetty and DBCP2, not Tomcat and Hikari</small></div>
+  <div class="n-arrow">→</div>
+  <div class="n-chip"><span>3</span> Swap the dependency</div>
+</div>
+
+<div class="need n4">
+  <div class="n-icon">🛂</div>
+  <div class="n-text"><b>Your rules replace the framework's</b><small>your own security filter chain and users</small></div>
+  <div class="n-arrow">→</div>
+  <div class="n-chip"><span>4</span> Own the bean</div>
+</div>
+
+</div>
+
+<div class="mt-4 text-xl">
+The question is not <i>can</i> you override, but at <b>which level</b>.
+</div>
+
+<!--
+[4:00 | 1 min]
+Defaults are great until they no longer fit. Real requirements arrive: load, partners, company standards, security rules.
+Teams then reach for the HEAVIEST tool first: bean replacement, framework fights, configuration sprawl.
+Each need maps to a different kind of override, from lightest to heaviest. Do not explain them yet - the ladder next slide does.
+Land: the question is not CAN you override, but at WHICH LEVEL.
 -->
 
 ---
 
 # The ladder: four levels of intervention
 
-| Level | What changes | Conditions report |
-|---|---|---|
-| **1 · Properties** | A value the autoconfig reads | Unchanged |
-| **2 · Customizers** | Behavior via an extension point | Unchanged |
-| **3 · Dependency swap** | The library behind the bean | **Flips** |
-| **4 · Ownership** | Who declares the bean | Default goes **negative** |
+<div class="ladder-wrap">
 
-<div class="mt-6 text-xl">
-Rule: stop at the <b>lowest level that works</b>.
+<div class="axis ax-effort">
+  <div class="ax-label">EFFORT</div>
+  <div class="ax-head"></div>
+  <div class="ax-line"></div>
+</div>
+
+<div class="ladder">
+  <div class="rung r4">
+    <div class="r-lvl">4</div>
+    <div class="r-main"><b>Ownership</b><small>Who declares the bean</small></div>
+    <div class="r-rep"><small>Conditions report</small>Default goes <b>negative</b></div>
+  </div>
+  <div class="rung r3">
+    <div class="r-lvl">3</div>
+    <div class="r-main"><b>Dependency swap</b><small>The library behind the bean</small></div>
+    <div class="r-rep"><small>Conditions report</small><b>Flips</b></div>
+  </div>
+  <div class="rung r2">
+    <div class="r-lvl">2</div>
+    <div class="r-main"><b>Customizers</b><small>Behavior via an extension point</small></div>
+    <div class="r-rep"><small>Conditions report</small>Unchanged</div>
+  </div>
+  <div class="rung r1">
+    <div class="r-lvl">1</div>
+    <div class="r-main"><b>Properties</b><small>A value the autoconfig reads</small></div>
+    <div class="r-rep"><small>Conditions report</small>Unchanged</div>
+  </div>
+</div>
+
+<div class="axis ax-control">
+  <div class="ax-label">CONTROL</div>
+  <div class="ax-head"></div>
+  <div class="ax-line"></div>
+</div>
+
+</div>
+
+<div class="mt-4 text-xl">
+Climb for more control, pay in effort. Rule: stop at the <b>lowest level that works</b>.
 </div>
 
 <!--
 [6:00 | 1 min]
 THE slide of the talk. Come back to it at the end.
-Control and effort both rise going down the table.
+Control and effort both rise as you climb the ladder: the two arrows on the sides.
 -->
 
 ---
 
 # Level 1 — Property tuning
 
-Fine-tune the default with the **least effort**. Spring Boot still builds the bean.
+Turn the dial, don't rewire the cockpit. **No bean changes, no behavior changes**, just different inputs to the bean Spring Boot already builds.
 
-```yaml {all|2-4|6-8|10-11}
+<div class="grid grid-cols-2 gap-6 mt-4">
+<div style="--slidev-code-font-size: 0.95rem; --slidev-code-line-height: 1.5">
+
+```yaml
 spring:
   datasource:
+    url: jdbc:postgresql://${DB_HOST}:5432/airline
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     hikari:
       maximum-pool-size: 20
-  jpa:
-    hibernate:
-      ddl-auto: validate
-  jackson:
-    default-property-inclusion: non_null
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
 ```
+
+</div>
+<div class="flex flex-col gap-3 justify-center">
+  <div class="pf-card" style="--c: #4aa3ff">
+    <div class="pf-icon">🗄️</div>
+    <div><b>DB configuration</b><small>which database the DataSource connects to, secrets from the environment</small></div>
+  </div>
+  <div class="pf-card" style="--c: #f5b83d">
+    <div class="pf-icon">🏊</div>
+    <div><b>Hikari pool settings</b><small>how many connections the pool keeps open</small></div>
+  </div>
+  <div class="pf-card" style="--c: #6db33f">
+    <div class="pf-icon">🩺</div>
+    <div><b>Health endpoints and probes</b><small>liveness and readiness for Kubernetes</small></div>
+  </div>
+</div>
+</div>
 
 <div class="mt-4 opacity-80">Autopilot still flies — you changed a setting.</div>
 
 <!--
 [7:00 | 1 min]
+Level 1 = tweak the parameters. The bean is still built by Spring Boot, same type, same behavior - only the inputs change.
+Walk the three highlights:
+1. DB configuration: url/username/password. Same DataSource bean, pointed somewhere else. Secrets come from environment variables, not the repo.
+2. Hikari pool settings: spring.datasource.hikari.* feeds the pool Boot already creates.
+3. Health endpoints and probes: management.endpoint.health.probes.enabled=true adds /actuator/health/liveness and /actuator/health/readiness. No code.
 Environment-specific files (dev/staging/prod) = no code change between deployments.
 Cue: "pilot adjusts a setting".
 -->
 
 ---
-layout: center
-class: text-center
----
 
-# ▶ DEMO 1 — Properties
+# Property tuning in practice
 
-`git checkout demo-1.0-property-tuning`
+<div class="instr-table">
 
-<div class="mt-6 opacity-70">Edit YAML · restart · JSON changes · report identical</div>
+| Use case | Property | Effect |
+|---|---|---|
+| 🛡️ Protect the schema | `spring.jpa.hibernate.ddl-auto=validate` | Hibernate checks the schema, never changes it |
+| 🧹 Clean JSON | `spring.jackson.default-property-inclusion=non_null` | Null fields disappear from API responses |
+| 🛬 Graceful landing | `server.shutdown=graceful` | In-flight requests finish before stop |
+| 🔊 Quieter cockpit | `logging.level.org.hibernate.SQL=DEBUG` | Turn SQL logging up or down per environment |
+
+</div>
+
+<div class="mt-4 text-xl">
+Same bean. Same behavior. <b>Different inputs.</b> The conditions report does not move.
+</div>
 
 <!--
-[8:00 | 3 min]  git checkout demo-1.0-property-tuning      (show: git show demo-1.0-property-tuning --stat, then application.yaml)
-1. Before: curl -s localhost:8080/v1/bookings/3 shows "flightNumber": null on the SEAT item.
-2. Four lines of YAML. No Java. Restart.
-3. After: the nulls are gone.
-4. scripts/snapshot.sh after && diff snapshots/before.txt snapshots/after.txt   -> IDENTICAL. That is the point.
-CUT-IF-LATE: skip pool size and graceful shutdown; keep the JSON nulls only.
+[7:45 | 45 sec]
+Practical, everyday Level 1 tweaks. Each one is a value an autoconfiguration already reads.
+Link to the demo: the JSON row is exactly what we change next (nulls on the seat item disappear).
+Analogy: turning a knob on the instrument panel, not changing the instrument.
 -->
 
 ---
 
 # Level 2 — Extension points
 
-<v-clicks>
+Plug into the slot, don't replace the bean. **Spring Boot still owns the bean**; it asks for implementations of an interface and applies each one. Properties are schema, extension points are contracts.
 
-- **Properties are schema. Extension points are contracts.**
-- The autoconfig *asks* for implementations of an interface and applies each one
-- The bean stays Spring Boot's — what it **does** changes, not who owns it
+<div class="grid grid-cols-2 gap-6 mt-4">
+<div style="--slidev-code-font-size: 0.95rem; --slidev-code-line-height: 1.5">
 
-</v-clicks>
+```java
+class BookingWebConfig
+    implements WebMvcConfigurer
+class SqlTaggingCustomizer
+    implements HibernatePropertiesCustomizer
+class DepartureDateFormatCustomizer
+    implements JsonMapperBuilderCustomizer
+```
 
-<div v-click class="d-note">
-  Conditions report: <b>unchanged</b> — the owning autoconfiguration stays in positive matches.
 </div>
+<div class="flex flex-col gap-3 justify-center">
+  <div class="pf-card" style="--c: #4aa3ff">
+    <div class="pf-icon">🌐</div>
+    <div><b>Web MVC</b><small>CORS for the web app, a correlation ID on every request</small></div>
+  </div>
+  <div class="pf-card" style="--c: #b48cff">
+    <div class="pf-icon">🗄️</div>
+    <div><b>Persistence</b><small>tag every SQL statement with the service name</small></div>
+  </div>
+  <div class="pf-card" style="--c: #2dd4bf">
+    <div class="pf-icon">🧾</div>
+    <div><b>JSON</b><small>dates as <code>22-Nov-2026</code> for partner systems</small></div>
+  </div>
+</div>
+</div>
+
+<div class="mt-4 opacity-80">Autopilot still flies — you added a waypoint.</div>
 
 <!--
 [12:00 | 1 min]
-A waypoint the autopilot was built to accept. Not a replacement, not a new bean for the same type.
-The test to remember: if the conditions report does NOT change, it is Level 2 (or Level 1).
+Level 2 = plug into a slot the autoconfiguration was built to accept. Not a replacement, not a new bean for the same type.
+Walk the three highlights:
+1. Web MVC: WebMvcAutoConfiguration collects every WebMvcConfigurer bean. CORS and interceptors are exactly what it delegates. No @EnableWebMvc - that would switch Boot's MVC autoconfig off and be an ownership transfer.
+2. Hibernate: HibernateJpaAutoConfiguration applies every HibernatePropertiesCustomizer before it builds the EntityManagerFactory. Good observability story for a DBA.
+3. Jackson: JacksonAutoConfiguration applies every JsonMapperBuilderCustomizer to the builder before it creates the JsonMapper.
+Cue: "pilot adds a waypoint". The test to remember: if the conditions report does NOT change, it is Level 2 (or Level 1).
 -->
 
 ---
 
-# Level 2 in the airline booking API
+# Extension points in practice
 
-<div class="uc-grid">
+<div class="instr-table">
 
-<div v-click class="uc uc-mvc">
-  <div class="uc-tag">WEB MVC</div>
-  <div class="uc-hook">WebMvcConfigurer</div>
-  <p>The booking web app runs on another origin, so the API needs <b>CORS</b>. Every request also needs a <b>correlation ID</b>.</p>
-</div>
-
-<div v-click class="uc uc-jpa">
-  <div class="uc-tag">PERSISTENCE</div>
-  <div class="uc-hook">HibernatePropertiesCustomizer</div>
-  <p>Tag every SQL statement with the service name so the DBA can trace a <b>slow query</b> back to the booking service.</p>
-</div>
-
-<div v-click class="uc uc-json">
-  <div class="uc-tag">JSON</div>
-  <div class="uc-hook">JsonMapperBuilderCustomizer</div>
-  <p>Partner systems expect departure dates as <b>22-Nov-2026</b>, not ISO-8601.</p>
-</div>
+| Use case | Extension point | Effect |
+|---|---|---|
+| 🌐 CORS for the web app | `WebMvcConfigurer` | The booking site's origin may call `/v1/**` |
+| 🔗 Correlation ID | `WebMvcConfigurer` interceptor | Every request can be traced across services |
+| 🏷️ Tag SQL for the DBA | `HibernatePropertiesCustomizer` | `/* booking-service */` on every statement |
+| 📅 Partner date format | `JsonMapperBuilderCustomizer` | `22-Nov-2026` instead of ISO-8601 |
 
 </div>
 
-<div v-click class="mt-6 text-xl">
-Same autoconfiguration. Same owner. <b>Different behavior.</b>
+<div class="mt-4 text-xl">
+Same autoconfiguration. Same owner. <b>Different behavior.</b> If the report changes, it is not Level 2.
 </div>
 
 <!--
 [13:00 | 1 min]
-[click] Web MVC: WebMvcAutoConfiguration collects every WebMvcConfigurer bean. CORS and interceptors are exactly what it was designed to delegate. Live demo.
-
-[click] Hibernate: HibernateJpaAutoConfiguration applies every HibernatePropertiesCustomizer before it builds the EntityManagerFactory. Good observability story for a DBA.
-
-[click] Jackson: JacksonAutoConfiguration applies every JsonMapperBuilderCustomizer to the builder before it creates the JsonMapper.
-
-[click] Land the sentence: same autoconfiguration, same owner, different behavior. The report will not move.
--->
-
----
-
-# Web MVC: CORS and a correlation ID
-
-```java {all|3-7|8-11}
-@Configuration
-class BookingWebConfig implements WebMvcConfigurer {
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/v1/**")
-                .allowedOrigins("https://book.example-air.com");
-    }
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new CorrelationIdInterceptor());
-    }
-}
-```
-
-<div class="mt-4 opacity-80">
-No <code>@EnableWebMvc</code>. No <code>WebMvcConfigurationSupport</code>. Boot's MVC defaults stay on.
-</div>
-
-<!--
-[14:00 | 1 min]
-Point out what is NOT here: no @EnableWebMvc (that would switch Boot's MVC autoconfig off and be an ownership transfer).
-The configurer only adds. Everything Boot configured for MVC is still there.
--->
-
----
-
-# Looks like Level 2 — but isn't
-
-<div class="trap-grid">
-
-<div v-click class="trap trap-sec">
-  <div class="uc-tag">FILTER CHAIN</div>
-  <div class="uc-hook">SecurityFilterChain</div>
-  <p>Declare one and the default chain <b>backs off</b>. The report changes, so it is <b>Level 4</b> — see Demo 4. Expected usage, but you own the chain.</p>
-</div>
-
-<div v-click class="trap trap-ds">
-  <div class="uc-tag">DATASOURCE</div>
-  <div class="uc-hook">No DataSourceCustomizer exists</div>
-  <p>Tune the pool with <code>spring.datasource.hikari.*</code> (Level 1) or swap the pool (Level 3). <code>JdbcConnectionDetails</code> supplies URL and credentials only.</p>
-</div>
-
-</div>
-
-<div v-click class="d-note">
-  The test: <b>if the conditions report changes, it is not Level 2.</b>
-</div>
-
-<!--
-[15:00 | 30 sec]
-Short callout, not a demo. Pre-empts the question "why isn't there a DataSource customizer?".
-SecurityFilterChain: Spring Security's documented extension model - so it is fine to declare - but the report shows the default going negative.
--->
-
----
-layout: center
-class: text-center
----
-
-# ▶ DEMO 2 — Customizers
-
-`git checkout demo-2.0-extension-points`
-
-<div class="mt-6 opacity-70">CORS + correlation ID · date format · report still positive</div>
-
-<!--
-[15:30 | 3 min]  git checkout demo-2.0-extension-points      (git show demo-2.0-extension-points --stat lists the four new files)
-1. MVC:   curl -si -H "Origin: https://book.example-air.com" localhost:8080/v1/bookings/1 | grep -iE 'access-control|x-correlation'
-          Files: config/BookingWebConfig.java, CorrelationIdInterceptor.java
-2. Jackson: curl -s localhost:8080/v1/bookings/1   -> "departureDate": "22-Nov-2026"
-          File: config/DepartureDateFormatCustomizer.java
-3. Hibernate (optional): console shows  Hibernate: /* booking-service */ select ...
-          File: config/SqlTaggingCustomizer.java
-4. scripts/snapshot.sh after && diff snapshots/before.txt snapshots/after.txt  -> IDENTICAL. JacksonAutoConfiguration#jacksonJsonMapper still positive.
-Remember the Jackson customizer: the Level 4 teaser takes it away.
+Everyday Level 2 customizations. Each one is a hook the autoconfiguration publishes.
+Looks like Level 2 but isn't:
+- SecurityFilterChain: declare one and the default chain BACKS OFF. The report changes, so it is Level 4 (Demo 4). Expected usage, but you own the chain.
+- DataSource: no DataSourceCustomizer exists. Tune the pool with spring.datasource.hikari.* (Level 1) or swap the pool (Level 3). JdbcConnectionDetails supplies URL and credentials only.
 -->
 
 ---
 
 # Level 3 — Dependency replacement
 
-When the **implementation itself** is the constraint — not its config or behavior.
+Swap the engine, keep the airframe. When the **implementation itself** is the constraint, change the jars: **no bean changes in your code**, and the conditions engine activates a different path.
 
-```text
-mvn dependency:tree
- └─ spring-boot-starter-web
-     └─ spring-boot-starter-tomcat   ← exclude
+<div class="grid grid-cols-2 gap-6 mt-4">
+<div style="--slidev-code-font-size: 0.95rem; --slidev-code-line-height: 1.6">
+
+```diff
+- spring-boot-starter-tomcat
++ spring-boot-starter-jetty
+- HikariCP
++ commons-dbcp2
 ```
 
-<v-clicks>
+</div>
+<div class="flex flex-col gap-3 justify-center">
+  <div class="pf-card" style="--c: #4aa3ff">
+    <div class="pf-icon">🏗️</div>
+    <div><b>Web server</b><small>Tomcat → Jetty</small></div>
+  </div>
+  <div class="pf-card" style="--c: #f5b83d">
+    <div class="pf-icon">🏊</div>
+    <div><b>Connection pool</b><small>HikariCP → Commons DBCP2</small></div>
+  </div>
+  <div class="pf-card" style="--c: #6db33f">
+    <div class="pf-icon">📝</div>
+    <div><b>Logging backend</b><small>Logback → Log4j2</small></div>
+  </div>
+</div>
+</div>
 
-- Classpath changes → the conditions engine activates a **different** path
-- Safe when code depends on an **abstraction** (`DataSource`, SLF4J, Servlet API)
-- Costly when you import provider-specific classes
-
-</v-clicks>
+<div class="mt-4 opacity-80">Autopilot still flies — you swapped the engine.</div>
 
 <!--
 [17:00 | 1 min]
-Swap the engine, keep the airframe.
-Real cases: Tomcat -> Jetty, Hikari -> DBCP2, Logback -> Log4j2.
+Level 3 = the implementation is the constraint, not its config or behavior. Change the classpath and the conditions engine does the rest.
+Walk the highlights:
+1. Tomcat -> Jetty: exclude spring-boot-starter-tomcat from starter-web, add spring-boot-starter-jetty.
+2. HikariCP -> DBCP2: exclude HikariCP from starter-data-jpa, add commons-dbcp2 (version managed by the Boot BOM). No Java touched.
+Gotcha: spring.datasource.hikari.* would be silently ignored after the swap, so the YAML moves to dbcp2.max-total.
 Undertow was dropped in Boot 4 (verify) - use Jetty.
-Do NOT promise "swap Hibernate for another ORM" - not a jar swap.
+Cue: "swap the engine". Level 1 and 2 left the report unchanged; Level 3 is where it FLIPS.
 -->
 
 ---
-layout: center
-class: text-center
----
 
-# ▶ DEMO 3 — Swap the engine
+# Dependency replacement in practice
 
-`git checkout demo-3.0-dependency-swap`
+<div class="instr-table">
 
-<div class="mt-6 opacity-70">Exclude Tomcat · add Jetty · the report flips</div>
+| Use case | Swap | Effect |
+|---|---|---|
+| 🏗️ Company standard server | Tomcat → Jetty | Jetty positive, Tomcat entries vanish |
+| 🏊 A different pool | HikariCP → Commons DBCP2 | Dbcp2 positive, Hikari negative |
+| 📝 A different logging backend | Logback → Log4j2 | Same SLF4J calls, new backend |
+| ⚠️ Provider-specific code | Hibernate → another ORM | Not a jar swap: you import its classes |
+
+</div>
+
+<div class="mt-4 text-xl">
+Same code. Different jars. <b>The report flips.</b> Safe when you code to the abstraction.
+</div>
 
 <!--
-[18:00 | 4 min]  git checkout demo-3.0-dependency-swap      (one commit: Tomcat to Jetty AND HikariCP to DBCP2; both are pom.xml-only changes)
-1. ./mvnw dependency:tree | grep -iE 'tomcat|hikari'   -> starter-web brings starter-tomcat; starter-data-jpa brings HikariCP
-2. git show demo-3.0-dependency-swap -- pom.xml            -> two exclusions + spring-boot-starter-jetty + commons-dbcp2. No Java touched.
-3. Restart. Log: "Jetty started on port 8080".
-4. scripts/conditions.sh 'Tomcat|Jetty|DataSourceConfiguration\.'
-   Jetty positive; Tomcat entries VANISH (module not on the classpath); Dbcp2 positive, Hikari negative.
-   Gotcha: spring.datasource.hikari.* would be silently ignored, so the YAML moved to dbcp2.max-total.
-FALLBACK: pre-recorded clip slides/public/demo3.mp4 (Maven downloads are the #1 live failure).
-CUT-IF-LATE: show only the Jetty half of the pom diff.
+[18:00 | 1 min]
+Safe when code depends on an ABSTRACTION (DataSource, SLF4J, Servlet API). Costly when you import provider-specific classes.
+Do NOT promise "swap Hibernate for another ORM" - that is not a jar swap; the last row is the warning.
+Conditions report: Jetty positive; Tomcat entries VANISH (module not on the classpath); Dbcp2 positive, Hikari negative.
+Maven downloads are the #1 live failure - if you demo this, have a recorded fallback.
 -->
 
 ---
 
 # Level 4 — Ownership transfer
 
-```java {all|2|4}
-// Actuator is on the classpath, so the default chain lives here:
-@ConditionalOnDefaultWebSecurity   // no SecurityFilterChain bean?
-class ManagementWebSecurityAutoConfiguration {
-    @Bean SecurityFilterChain managementSecurityFilterChain(...) { ... }
-}
+Disengage the autopilot, fly manually. **You declare the bean**, the default backs off, and you own everything it was doing, including what you didn't know about.
+
+<div class="grid grid-cols-2 gap-6 mt-4">
+<div style="--slidev-code-font-size: 0.95rem; --slidev-code-line-height: 1.6">
+
+```java
+@Bean SecurityFilterChain
+@Bean UserDetailsService
+@Bean JsonMapper
 ```
 
-<v-clicks>
+</div>
+<div class="flex flex-col gap-3 justify-center">
+  <div class="pf-card" style="--c: #ef5b5b">
+    <div class="pf-icon">🛂</div>
+    <div><b>Security</b><small>the default chain backs off, every rule is now yours</small></div>
+  </div>
+  <div class="pf-card" style="--c: #f5b83d">
+    <div class="pf-icon">👤</div>
+    <div><b>Users</b><small>the generated password is gone, you supply the accounts</small></div>
+  </div>
+  <div class="pf-card" style="--c: #2dd4bf">
+    <div class="pf-icon">🧾</div>
+    <div><b>JSON</b><small>a hand-built mapper silently drops the Level 2 date format</small></div>
+  </div>
+</div>
+</div>
 
-- The guard is the **handover agreement** (`@ConditionalOnMissingBean` in its many forms)
-- Declare the bean → the default **backs off**, and the report records it
-- You now own **everything it was doing** — including what you didn't know about
-
-</v-clicks>
+<div class="mt-4 opacity-80">Autopilot disengaged — you are flying manually.</div>
 
 <!--
 [21:00 | 1 min]
-Disengage the autopilot. Manual flight.
-This is not "bean replacement" - it is a transfer of responsibility.
-Spring Security's guard is a composed condition (ConditionalOnDefaultWebSecurity); JsonMapper uses plain @ConditionalOnMissingBean. Same idea.
+Level 4 = transfer of responsibility, not "bean replacement".
+The guard is the handover agreement: @ConditionalOnMissingBean in its many forms (Spring Security uses the composed @ConditionalOnDefaultWebSecurity; JsonMapper uses the plain one). Same idea.
+Declare the bean -> the default backs off, and the conditions report records it (negative match naming your bean).
+Walk the highlights:
+1. SecurityFilterChain: ManagementWebSecurityAutoConfiguration backs off. Your chain starts EMPTY.
+2. UserDetailsService: UserDetailsServiceAutoConfiguration backs off, no more generated password.
+3. JsonMapper: JacksonAutoConfiguration#jacksonJsonMapper goes negative; the date customizer and spring.jackson.* silently stop applying. Nothing fails at startup.
+Cue: "disengage the autopilot".
+-->
+
+---
+
+# Ownership in practice
+
+<div class="instr-table">
+
+| Use case | Bean you declare | What you now own |
+|---|---|---|
+| 🛂 Your own security rules | `SecurityFilterChain` | Every request rule, CSRF, sessions |
+| 👤 Your own users | `UserDetailsService` | Accounts and password storage |
+| 🧾 A hand-built mapper | `JsonMapper` | Date format and `spring.jackson.*`, silently dropped |
+| 🔄 Any default bean | `@ConditionalOnMissingBean` guard | Every future Boot change to that bean |
+
+</div>
+
+<div class="mt-4 text-xl">
+Declare the bean, the default backs off. <b>Whatever you leave out is not there.</b>
+</div>
+
+<!--
+[22:00 | 1.5 min]
+The Demo 4 story, if you tell it: declare a chain and forget the authorization rule -> curl with NO credentials returns 200, and /actuator/beans too. A missing rule is an open door.
+Fix: say what the default used to do silently - anyRequest().authenticated(), role rules, stateless sessions, CSRF off for a header-authenticated API.
+The conditions report is the same before and after the fix: it proves who owns the bean, not whether the bean is correct. Correctness is now your code and your tests.
 -->
 
 ---
@@ -443,130 +644,87 @@ Spring Security's guard is a composed condition (ConditionalOnDefaultWebSecurity
 <div class="fl-head">Condition checked at startup</div>
 <div class="fl-head">Our app registers</div>
 
-<div class="fl-default" :class="$clicks >= 2 ? 'fl-off' : ''">
+<div class="fl-default fl-off">
   <b>ManagementWebSecurityAutoConfiguration</b>
   <small>default chain <code>managementSecurityFilterChain</code></small>
-  <div class="stack">
-    <div v-click.hide="2" class="fl-status ok">✓ registered</div>
-    <div v-click="2" class="fl-status no">✕ backs off</div>
+  <div>
+    <div class="fl-status ok">✓ registered</div>
+    <div class="fl-status no">✕ backs off</div>
   </div>
 </div>
 <div class="fl-cond">
   <code>@ConditionalOnDefaultWebSecurity</code>
-  <div class="stack">
-    <small v-click.hide="2">no <code>SecurityFilterChain</code> bean found → register the default</small>
-    <small v-click="2">found <code>securityFilterChain</code> → do not register</small>
+  <div>
+    <small>no <code>SecurityFilterChain</code> bean found → register the default</small>
+    <small>found <code>securityFilterChain</code> → do not register</small>
   </div>
 </div>
-<div v-click="1" class="fl-ours">
+<div class="fl-ours">
   <b>securityFilterChain</b>
   <small>our <code>BookingSecurityConfig</code></small>
 </div>
 
-<div class="fl-default" :class="$clicks >= 2 ? 'fl-off' : ''">
+<div class="fl-default fl-off">
   <b>UserDetailsServiceAutoConfiguration</b>
   <small>in-memory user, generated password</small>
-  <div class="stack">
-    <div v-click.hide="2" class="fl-status ok">✓ registered</div>
-    <div v-click="2" class="fl-status no">✕ backs off</div>
+  <div>
+    <div class="fl-status ok">✓ registered</div>
+    <div class="fl-status no">✕ backs off</div>
   </div>
 </div>
 <div class="fl-cond">
   <code>@ConditionalOnMissingBean</code>
-  <div class="stack">
-    <small v-click.hide="2">no <code>UserDetailsService</code> / <code>AuthenticationProvider</code> bean → register the default</small>
-    <small v-click="2">found <code>userDetailsService</code> → do not register</small>
+  <div>
+    <small>no <code>UserDetailsService</code> / <code>AuthenticationProvider</code> bean → register the default</small>
+    <small>found <code>userDetailsService</code> → do not register</small>
   </div>
 </div>
-<div v-click="1" class="fl-ours">
+<div class="fl-ours">
   <b>userDetailsService</b>
   <small>our in-memory <code>passenger</code> and <code>admin</code> users</small>
 </div>
 
 </div>
 
-<pre v-click="3" class="fl-report">Negative matches:
+<pre class="fl-report">Negative matches:
   ManagementWebSecurityAutoConfiguration:
     Did not match: found beans of type 'SecurityFilterChain' securityFilterChain</pre>
 
 <!--
 [22:00 | 1.5 min]
-[click] Start with what we register: a SecurityFilterChain and a UserDetailsService. Our beans enter the ApplicationContext.
+Start with what we register: a SecurityFilterChain and a UserDetailsService. Our beans enter the ApplicationContext.
 
-[click] Now the conditions engine evaluates the defaults against the bean registry. It finds our beans, so both defaults back off. Nothing is deleted - the default is simply never registered.
+Now the conditions engine evaluates the defaults against the bean registry. It finds our beans, so both defaults back off. Nothing is deleted - the default is simply never registered.
 
-[click] This is the evidence: a negative match that names the exact bean that caused it. One line per handover.
+This is the evidence: a negative match that names the exact bean that caused it. One line per handover.
 Before this slide the defaults are green: the guard found no bean, so Boot registered them.
--->
-
----
-
-# What you inherit
-
-```text
-The default SecurityFilterChain was doing:
-  ├── every request must be authenticated (the actuator too)
-  ├── HTTP Basic and form login
-  ├── CSRF protection and session handling
-  └── a user to log in with (generated password in the log)
-```
-
-<div class="mt-6 text-xl">
-Your chain starts empty. <b>Whatever you leave out is not there.</b>
-</div>
-
-<!--
-[23:30 | 0.5 min]
-Set up Demo 4: predict what breaks. Ask the room: "what happens if I declare a chain and forget the authorization rule?"
-Aside: JsonMapper is the same story - the date customizer silently stops applying.
--->
-
----
-layout: center
-class: text-center
----
-
-# ▶ DEMO 4 — Take manual control
-
-`git checkout demo-4.0-security-defaults`  →  4.1  →  4.2
-
-<div class="mt-6 opacity-70">Security starter · own the filter chain · forget a rule · fix it</div>
-
-<!--
-[24:00 | 5 min]  Level 4. Tags: demo-4.0-security-defaults -> demo-4.1-own-the-chain -> demo-4.2-own-the-chain-fixed
-1. DEFAULTS  git checkout demo-4.0-security-defaults
-   - Log: "Using generated security password: ..."
-   - curl -i localhost:8080/v1/bookings   -> 401
-   - CURL_AUTH=user:<generated> scripts/conditions.sh 'WebSecurity|UserDetails'
-     positive: ManagementWebSecurityAutoConfiguration (the default chain), UserDetailsServiceAutoConfiguration
-2. OWN IT    git checkout demo-4.1-own-the-chain        (git show demo-4.1-own-the-chain: config/BookingSecurityConfig.java)
-   - Generated password is gone. Report: both defaults NEGATIVE, naming securityFilterChain and userDetailsService.
-3. THE MISTAKE
-   - curl -i localhost:8080/v1/bookings     -> 200, NO credentials. curl localhost:8080/actuator/beans -> 200 too.
-4. FIX       git checkout demo-4.2-own-the-chain-fixed
-   - no creds 401 | passenger:passenger123 -> 403 on the list, 200 on /v1/bookings/1 | admin:admin123 -> 200
-   - The conditions report is the SAME as step 2: it proves ownership, not correctness.
-5. TEASER (30s, slide only, not in the repo)
-   - A hand-built @Bean JsonMapper (snake_case) makes JacksonAutoConfiguration#jacksonJsonMapper NEGATIVE and silently drops
-     the dd-MMM-yyyy format and the null handling. Nothing fails at startup.
 -->
 
 ---
 
 # The cost of ownership
 
-<v-clicks>
+<div class="instr-table">
 
-- Spring Boot upgrades update the autoconfig — **not your bean**
-- You inherit the framework's integration testing burden
-- Security is the clearest case: **a missing rule is an open door**
-- Know the cost **before** the decision, not after
+| Cost | What it means |
+|---|---|
+| 🔄 Upgrades | Spring Boot updates the autoconfig, **not your bean** |
+| 🧪 Testing | You inherit the framework's integration-testing burden |
+| 🔓 Security | The default required auth on every request; **a missing rule is an open door** |
+| 🧠 Knowledge | You must know what the default was doing before you replaced it |
 
-</v-clicks>
+</div>
+
+<div class="mt-4 text-xl">
+Your chain starts empty. Know the cost <b>before</b> the decision, not after.
+</div>
 
 <!--
-[27:00 | 1 min]
+[23:30 | 1 min]
 Not a reason to avoid ownership - an accurate price tag.
+What the default SecurityFilterChain was doing for you: every request authenticated (the actuator too), HTTP Basic and form login, CSRF protection and session handling, and a user to log in with.
+Ask the room: "what happens if I declare a chain and forget the authorization rule?" Answer: open door.
+Aside: JsonMapper is the same story - the date customizer silently stops applying.
 -->
 
 ---
@@ -575,28 +733,28 @@ Not a reason to avoid ownership - an accurate price tag.
 
 <div class="decide">
 
-<div v-click class="d-row">
+<div class="d-row">
   <div class="d-q">Is there a <b>property</b> for it?</div>
   <div class="d-arrow ok">yes →</div>
   <div class="d-lvl l1"><span>1</span> Tune it</div>
   <div class="d-no">no ↓</div>
 </div>
 
-<div v-click class="d-row">
+<div class="d-row">
   <div class="d-q">Is there an <b>extension point</b>?</div>
   <div class="d-arrow ok">yes →</div>
   <div class="d-lvl l2"><span>2</span> Customize it</div>
   <div class="d-no">no ↓</div>
 </div>
 
-<div v-click class="d-row">
+<div class="d-row">
   <div class="d-q">Is only the <b>library</b> wrong?</div>
   <div class="d-arrow ok">yes →</div>
   <div class="d-lvl l3"><span>3</span> Swap the dependency</div>
   <div class="d-no">no ↓</div>
 </div>
 
-<div v-click class="d-row">
+<div class="d-row">
   <div class="d-q">Nothing above fits</div>
   <div class="d-arrow ok">then →</div>
   <div class="d-lvl l4"><span>4</span> Own the bean</div>
@@ -604,34 +762,34 @@ Not a reason to avoid ownership - an accurate price tag.
 
 </div>
 
+<div class="mt-4 text-xl">
+Stop at the first <b>yes</b>: the <b>lowest level that works</b>.
+</div>
+
 <!--
 [28:00 | 1 min]
 Walk the ladder top to bottom. Stop at the first "yes" — that is the whole rule.
 
-[click] First question: is there a property? If yes, use it. Cheapest, safest, and Spring Boot keeps ownership.
+First question: is there a property? If yes, use it. Cheapest, safest, and Spring Boot keeps ownership.
 
-[click] No property? Ask whether the autoconfiguration publishes an extension point — a Customizer or Configurer. You change behavior, Boot keeps the bean.
+No property? Ask whether the autoconfiguration publishes an extension point — a Customizer or Configurer. You change behavior, Boot keeps the bean.
 
-[click] No extension point? Check whether only the library is the problem. Then it is a classpath change: exclude one jar, add another, and the conditions engine does the rest.
+No extension point? Check whether only the library is the problem. Then it is a classpath change: exclude one jar, add another, and the conditions engine does the rest.
 
-[click] Only when none of those fit do you own the bean. Say the cost again: every future Boot change to that bean is now yours.
+Only when none of those fit do you own the bean. Say the cost again: every future Boot change to that bean is now yours.
 -->
 
 ---
 
 # Takeaways
 
-1. **Read the report** before touching anything
-2. Stop at the **lowest level** that works
-3. Ownership is a **decision**, not a reflex
-
-<div class="mt-10 opacity-70">
-Next: from owning a bean to extracting a custom starter
-</div>
+1. **Magic is good, but know the tricks**: read the instruments and the conditions report before touching anything
+2. Stop at the **lowest level** that works: properties, extension points, dependency swap, ownership
+3. Ownership is a **decision**, not a reflex: you own everything the default was doing
 
 <!--
 [29:00 | 1 min]
-Close the flight metaphor: a good pilot knows when NOT to disengage the autopilot.
+Close both metaphors: a good magician knows the trick, and a good pilot knows when NOT to disengage the autopilot.
 Then Q&A / repo URL.
 -->
 
@@ -640,6 +798,38 @@ layout: center
 class: text-center
 ---
 
-# Questions?
+# ▶ DEMO — Climb the ladder
 
-**github.com/&lt;you&gt;/autopilot-airline**
+`git checkout demo-0.0-baseline`  →  1.0  →  2.0  →  3.0  →  4.0  →  4.1  →  4.2
+
+<div class="mt-6 opacity-70">
+Properties · Customizers · Dependency swap · Own the chain · the conditions report at every step
+</div>
+
+<!--
+[26:00 | 5 min]  Repo: autopilot-airline. Tags, in order:
+demo-0.0-baseline -> demo-1.0-property-tuning -> demo-2.0-extension-points -> demo-3.0-dependency-swap -> demo-4.0-security-defaults -> demo-4.1-own-the-chain -> demo-4.2-own-the-chain-fixed
+Same gesture every time: before / change / after, with scripts/conditions.sh and scripts/snapshot.sh.
+
+0. BASELINE  ./mvnw spring-boot:run ; curl -s localhost:8080/v1/bookings/3 | python3 -m json.tool  (nulls on extras, ISO dates)
+   scripts/conditions.sh 'JacksonAutoConfiguration#|DataSourceConfiguration\.|TomcatServlet' ; scripts/snapshot.sh before
+1. LEVEL 1   application.yaml only: JSON nulls disappear (spring.jackson.default-property-inclusion). snapshot diff: IDENTICAL.
+2. LEVEL 2   curl -si -H "Origin: https://book.example-air.com" localhost:8080/v1/bookings/1 | grep -iE 'access-control|x-correlation'
+   departureDate -> 22-Nov-2026 (DepartureDateFormatCustomizer). snapshot diff: IDENTICAL, jacksonJsonMapper still positive.
+3. LEVEL 3   git show demo-3.0-dependency-swap -- pom.xml : two exclusions + jetty + commons-dbcp2, no Java touched.
+   scripts/conditions.sh 'Tomcat|Jetty|DataSourceConfiguration\.' : Jetty positive, Tomcat entries vanish, Dbcp2 positive, Hikari negative.
+   FALLBACK if Maven is slow: recorded clip.
+4. LEVEL 4   4.0 defaults: generated password in the log, 401 without credentials.
+   4.1 own it: BookingSecurityConfig -> generated password gone; report shows both defaults NEGATIVE.
+       THE MISTAKE: curl -i localhost:8080/v1/bookings -> 200 with NO credentials; /actuator/beans -> 200 too.
+   4.2 fix: no creds 401 | passenger:passenger123 -> 403 on the list, 200 on /v1/bookings/1 | admin:admin123 -> 200.
+       The conditions report is the SAME as 4.1: it proves ownership, not correctness.
+CUT-IF-LATE: skip Level 1 and Level 3, keep Level 2 and the Level 4 mistake.
+-->
+
+---
+layout: center
+class: text-center
+---
+
+# Questions?
