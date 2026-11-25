@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useNav } from '@slidev/client'
+import CountdownTimer from './components/CountdownTimer.vue'
 
-const { slides, currentSlideNo, total } = useNav()
+const { slides, currentSlideNo, total, isPrintMode } = useNav()
 
 function titleOf(no: number): string {
   const route = slides.value[no - 1]
@@ -15,6 +16,9 @@ const nextTitle = computed(() => (currentSlideNo.value < total.value ? titleOf(c
 </script>
 
 <template>
+  <!-- One timer for the whole deck: GlobalBottom is mounted once in the slideshow. -->
+  <CountdownTimer v-if="!isPrintMode" :minutes="10" />
+
   <div class="route-bar">
     <div class="route-side route-prev">
       <template v-if="prevTitle">← {{ prevTitle }}</template>
