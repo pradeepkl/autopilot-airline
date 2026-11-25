@@ -613,3 +613,10 @@
   font-size: 1.3rem;
   line-height: 1.9;
 }
+
+.book-url {
+  margin-top: 0.2rem;
+  font-size: 0.8rem;
+  color: #6db33f;
+  font-family: ui-monospace, monospace;
+}

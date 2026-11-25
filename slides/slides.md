@@ -51,6 +51,7 @@ Repo: autopilot-airline (show URL once).
   <div>
     <div class="book-title">Spring Boot: On Autopilot</div>
     <small>Engineering Beyond Defaults · Spring Boot 4</small>
+    <div class="book-url">spring-boot.classpath.in</div>
   </div>
 </div>
 
@@ -59,6 +60,7 @@ Repo: autopilot-airline (show URL once).
   <div>
     <div class="book-title">Modern Java: The Mindset Shift</div>
     <small>From Implementation-Oriented Code to Intent-Oriented Design · Java 25</small>
+    <div class="book-url">modern-java.classpath.in</div>
   </div>
 </div>
 
@@ -67,6 +69,7 @@ Repo: autopilot-airline (show URL once).
   <div>
     <div class="book-title">21 Days to Kubernetes Mastery</div>
     <small>An Actionable Roadmap to Kubernetes</small>
+    <div class="book-url">k8s-mastery.classpath.dev</div>
   </div>
 </div>
 
